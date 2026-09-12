@@ -4,6 +4,13 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import com.vidx.platform.clipboard.ClipboardMonitor
+import com.vidx.platform.download.DownloadEngine
+import com.vidx.platform.net.NetworkMonitor
+import com.vidx.platform.settings.AndroidSettings
+import com.vidx.platform.storage.AndroidStorage
+import com.vidx.platform.storage.HistoryDb
+import com.vidx.platform.storage.ThumbnailCache
 
 class App : Application() {
 
@@ -16,10 +23,34 @@ class App : Application() {
             private set
     }
 
+    lateinit var settings: AndroidSettings
+        private set
+    lateinit var storage: AndroidStorage
+        private set
+    lateinit var history: HistoryDb
+        private set
+    lateinit var thumbs: ThumbnailCache
+        private set
+    lateinit var engine: DownloadEngine
+        private set
+    lateinit var clipboard: ClipboardMonitor
+        private set
+    private var networkMonitor: NetworkMonitor? = null
+
     override fun onCreate() {
         super.onCreate()
         instance = this
         createNotificationChannels()
+
+        settings = AndroidSettings(this)
+        storage = AndroidStorage(this)
+        history = HistoryDb(this)
+        thumbs = ThumbnailCache(this)
+        engine = DownloadEngine(this, settings, storage, history)
+        clipboard = ClipboardMonitor(this)
+
+        engine.onAppStart()
+        (networkMonitor ?: NetworkMonitor(this).also { networkMonitor = it }).start()
     }
 
     private fun createNotificationChannels() {

@@ -32,6 +32,9 @@ object PlatformRegistry {
 
     fun forPlatform(platform: Platform): PlatformAdapter? = byPlatform[platform]
 
+    /** Platforms the app recognises (detection works for all of them). */
+    fun supportedPlatforms(): List<Platform> = adapters.map { it.platform }
+
     fun forUrl(url: String): PlatformAdapter? = forPlatform(PlatformDetector.detect(url))
 
     /** Analyzes a URL through the right adapter, with unified error mapping. */

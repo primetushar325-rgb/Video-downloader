@@ -17,6 +17,7 @@ object BrandConfig {
     const val tagline = "Video Downloader & Media Utility"
     const val versionName = "1.0.0"
     const val versionCode = 1
+    const val appDescription = "A production-ready Android video downloader & media utility: smart queue, background downloads, transcripts and history."
 
     /** Short namespace used for on-device storage folders (VIDX/Videos, …). */
     const val storageRootName = "VIDX"
