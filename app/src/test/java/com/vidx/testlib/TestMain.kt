@@ -11,6 +11,11 @@ object TestMain {
             "com.vidx.core.url.PlatformDetectorTest",
             "com.vidx.core.url.UrlNormalizerTest",
             "com.vidx.core.util.CoreUtilTest",
+            "com.vidx.core.download.HttpDownloaderTest",
+            "com.vidx.core.download.DownloadQueueTest",
+            "com.vidx.core.platforms.AdaptersTest",
+            "com.vidx.core.transcript.TranscriptParserTest",
+            "com.vidx.core.clipboard.ClipboardTest",
         )
         for (s in suites) Class.forName(s)
         kotlin.system.exitProcess(Runner.main())

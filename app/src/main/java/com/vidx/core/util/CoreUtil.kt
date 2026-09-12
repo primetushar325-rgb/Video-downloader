@@ -121,3 +121,14 @@ inline fun <T, R> T.runCatchingOutcome(code: String, crossinline block: (T) -> R
     } catch (e: Exception) {
         Outcome.Err(code, e.message ?: "unexpected error", retryable = true)
     }
+
+/**
+ * Like [runCatchingOutcome] but for blocks that already return an [Outcome]:
+ * the result is passed through instead of being wrapped again.
+ */
+inline fun <T> runCatchingOutcomeFlat(code: String, crossinline block: () -> Outcome<T>): Outcome<T> =
+    try {
+        block()
+    } catch (e: Exception) {
+        Outcome.Err(code, e.message ?: "unexpected error", retryable = true)
+    }
