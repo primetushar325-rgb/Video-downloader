@@ -21,6 +21,13 @@ class NetworkMonitor(context: Context) {
                 .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
                 .build()
             cm.registerNetworkCallback(request, callback)
+            // Seed the engine with the true current state instead of a guess.
+            val caps = cm.getNetworkCapabilities(cm.activeNetwork)
+            if (caps != null && caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)) {
+                App.instance.engine.onNetworkChanged(true, currentIsWifi())
+            } else {
+                App.instance.engine.onNetworkChanged(false, false)
+            }
         } catch (e: Exception) {
             App.instance.engine.onNetworkChanged(true, false)
         }

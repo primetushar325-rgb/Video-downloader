@@ -478,7 +478,10 @@ class DownloadsScreen(context: Context) : LinearLayout(context) {
         }
 
         private fun endDrag() {
-            overlay?.let { (it.parent as? ViewGroup)?.removeView(it.parent as View) }
+            overlay?.let { ov ->
+                val holder = ov.parent as? ViewGroup
+                holder?.let { h -> (h.parent as? ViewGroup)?.removeView(h) }
+            }
             overlay = null
             dragging = null
             fromIndex = -1

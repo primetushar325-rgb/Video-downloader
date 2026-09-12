@@ -295,9 +295,6 @@ class HomeScreen(context: Context) : ScrollView(context) {
         activity.startDownloadService()
         App.instance.engine.startAll()
         Ui.toast(context, "Downloading ${pending.size} video${if (pending.size > 1) "s" else ""}…")
-        (context as MainActivity).let { act ->
-            act.findViewById<View>(android.R.id.content)?.let {}
-        }
     }
 
     private fun analyzeInput() {
