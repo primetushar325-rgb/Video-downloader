@@ -75,6 +75,26 @@ object Tests {
     private val cases = LinkedHashMap<String, MutableList<Case>>()
     private val suites = LinkedHashMap<String, () -> Unit>()
 
+    /** Canonical suite list — loaded explicitly by BOTH runners (TestMain + JUnitBridge). */
+    val suiteClassNames: List<String> = listOf(
+        "com.vidx.core.json.JsonTest",
+        "com.vidx.core.url.UrlValidatorTest",
+        "com.vidx.core.url.PlatformDetectorTest",
+        "com.vidx.core.url.UrlNormalizerTest",
+        "com.vidx.core.util.CoreUtilTest",
+        "com.vidx.core.download.HttpDownloaderTest",
+        "com.vidx.core.download.DownloadQueueTest",
+        "com.vidx.core.platforms.AdaptersTest",
+        "com.vidx.core.transcript.TranscriptParserTest",
+        "com.vidx.core.clipboard.ClipboardTest",
+    )
+
+    /** Forces class loading so every suite registers its cases (Gradle/JUnit only
+     *  loads classes that carry @Test methods, so this must be explicit). */
+    fun loadAllSuites() {
+        for (name in suiteClassNames) Class.forName(name)
+    }
+
     fun suite(name: String, fn: () -> Unit) {
         suites[name] = fn
     }

@@ -10,6 +10,7 @@ import org.junit.Test
 class JUnitBridge {
     @Test
     fun vidxFullSuite() {
+        Tests.loadAllSuites() // JUnit only discovers @Test classes — load the rest explicitly.
         val results = Tests.runAll()
         val failures = results.filter { !it.passed }
         if (failures.isNotEmpty()) {

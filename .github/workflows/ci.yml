@@ -34,14 +34,35 @@ jobs:
         run: ./gradlew --no-daemon assembleDebug --stacktrace
 
       - name: Unit tests
-        run: ./gradlew --no-daemon testDebugUnitTest --stacktrace
+        id: unit-tests
+        run: |
+          set +e
+          ./gradlew --no-daemon testDebugUnitTest --stacktrace
+          rc=$?
+          # Surface every failing test as a check-run annotation so failures are
+          # diagnosable even when raw log archives are unavailable.
+          python3 - <<'EOF'
+          import glob, re, html, os
+          for f in sorted(glob.glob("app/build/test-results/testDebugUnitTest/*.xml")):
+              txt = open(f, encoding="utf-8").read()
+              for m in re.finditer(r'<testcase name="([^"]+)" classname="([^"]+)"[^>]*>(.*?)</testcase>', txt, re.S):
+                  inner = m.group(3)
+                  fm = re.search(r'<failure[^>]*message="([^"]*)"', inner)
+                  em = re.search(r'<error[^>]*message="([^"]*)"', inner)
+                  if fm or em:
+                      msg = html.unescape((fm or em).group(1)).replace('"', "'")[:900]
+                      print(f"::error file={m.group(2)},title=Test failed::{m.group(1)} :: {msg}")
+          EOF
+          exit $rc
 
       - name: Collect test report
+        if: always()
         run: |
           mkdir -p ci-reports
           cp app/build/reports/tests/testDebugUnitTest/index.html ci-reports/unit-tests.html 2>/dev/null || true
+          cp app/build/test-results/testDebugUnitTest/*.xml ci-reports/ 2>/dev/null || true
           python3 - <<'EOF'
-          import glob, os, re, html
+          import glob, os, re
           summary = []
           for f in sorted(glob.glob("app/build/test-results/testDebugUnitTest/*.xml")):
               txt = open(f, encoding="utf-8").read()
@@ -59,11 +80,12 @@ jobs:
           ls -la dist/
 
       - name: Commit artifacts
-        if: github.event_name == 'push'
+        if: always() && github.event_name == 'push'
         run: |
           git config user.name  "vidx-ci-bot"
           git config user.email "vidx-ci-bot@users.noreply.github.com"
-          git add dist/VIDX-debug.apk ci-reports/
+          git add ci-reports/ 2>/dev/null || true
+          git add dist/VIDX-debug.apk 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "No changes"
           else
