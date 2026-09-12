@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- VIDX brand palette. Runtime UI uses ThemeEngine (Black/Red/Blue/Purple accents). -->
+    <color name="vidx_black">#0A0B10</color>
+    <color name="vidx_surface">#13141D</color>
+    <color name="vidx_red">#FF2D55</color>
+    <color name="vidx_blue">#2E7CFF</color>
+    <color name="vidx_purple">#8E4DFF</color>
+    <color name="vidx_text_primary">#F2F3F8</color>
+    <color name="vidx_text_secondary">#9DA2B3</color>
+</resources>

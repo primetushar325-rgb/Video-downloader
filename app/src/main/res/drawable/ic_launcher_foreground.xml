@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- VIDX brand mark: a bold "V" whose right stroke becomes a download arrow.
+     Original artwork — no third-party/copyrighted logos are used. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- gradient sheen (red → purple) rendered as layered translucent strokes -->
+    <path
+        android:pathData="M 34,34 L 56,76 L 76,34"
+        android:strokeColor="#FF2D55"
+        android:strokeWidth="10"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M 34,34 L 56,76 L 76,34"
+        android:strokeColor="#8E4DFF"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000"
+        android:alpha="0.85" />
+    <!-- download arrow continuing the right stroke -->
+    <path
+        android:pathData="M 76,40 L 76,66 M 68,58 L 76,68 L 84,58"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M 62,78 L 90,78"
+        android:strokeColor="#2E7CFF"
+        android:strokeWidth="6"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+</vector>

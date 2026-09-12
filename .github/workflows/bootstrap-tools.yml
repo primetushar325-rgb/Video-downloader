@@ -1,0 +1,55 @@
+# One-time toolchain bootstrap.
+#
+# The sandboxed development environment cannot reach dl.google.com / Maven Central
+# directly, so this workflow (run on GitHub's infra, which has full network access)
+# fetches the few Google-distributed build binaries and commits them to `vendor/`.
+# Everything else (Kotlin compiler, aapt2, apksigner) already ships on npm/pip.
+#
+# Triggered only by changes to this file or manually (workflow_dispatch).
+name: bootstrap-tools
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/bootstrap-tools.yml"
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch r8.jar (d8 dexer)
+        run: |
+          set -euxo pipefail
+          mkdir -p vendor/android
+          LATEST=$(curl -fsSL https://repo1.maven.org/maven2/com/android/tools/r8/maven-metadata.xml | grep -oP '(?<=<latest>)[^<]+')
+          echo "r8 latest: $LATEST"
+          curl -fL -o vendor/android/r8.jar "https://repo1.maven.org/maven2/com/android/tools/r8/${LATEST}/r8-${LATEST}.jar"
+          ls -la vendor/android/r8.jar
+
+      - name: Fetch Temurin JDK 17 (full JDK w/ javac)
+        run: |
+          set -euxo pipefail
+          mkdir -p vendor/android/jdk17
+          curl -fL -o /tmp/jdk17.tar.gz "https://api.adoptium.net/v3/binary/latest/17/ga/linux/x64/jdk/hotspot/normal/eclipse"
+          tar xzf /tmp/jdk17.tar.gz -C vendor/android/jdk17 --strip-components=1
+          du -sh vendor/android/jdk17
+          vendor/android/jdk17/bin/java -version
+
+      - name: Commit vendored binaries
+        run: |
+          git config user.name  "vidx-ci-bot"
+          git config user.email "vidx-ci-bot@users.noreply.github.com"
+          git add vendor/android/r8.jar
+          git add vendor/android/jdk17
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+          else
+            git commit -m "build: vendor r8 + JDK17 for offline toolchain"
+            git push
+          fi

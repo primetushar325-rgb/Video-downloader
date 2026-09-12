@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Branding. NOTE: the runtime app name, tagline and brand colours are defined in a
+         single place — BrandConfig.kt — so renaming the app is a one-line change.
+         Keep this string in sync (it is the launcher label). -->
+    <string name="app_name">VIDX</string>
+    <string name="app_tagline">Video Downloader &amp; Media Utility</string>
+
+    <!-- Accessibility -->
+    <string name="a11y_analyze">Analyze video URL</string>
+    <string name="a11y_paste">Paste from clipboard</string>
+    <string name="a11y_download_all">Download all videos in queue</string>
+</resources>
