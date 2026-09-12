@@ -37,8 +37,9 @@ jobs:
         id: unit-tests
         run: |
           set +e
-          ./gradlew --no-daemon testDebugUnitTest --stacktrace
+          ./gradlew --no-daemon testDebugUnitTest --stacktrace > test-output.log 2>&1
           rc=$?
+          tail -n 120 test-output.log
           # Surface every failing test as a check-run annotation so failures are
           # diagnosable even when raw log archives are unavailable.
           python3 - <<'EOF'
@@ -61,6 +62,7 @@ jobs:
           mkdir -p ci-reports
           cp app/build/reports/tests/testDebugUnitTest/index.html ci-reports/unit-tests.html 2>/dev/null || true
           cp app/build/test-results/testDebugUnitTest/*.xml ci-reports/ 2>/dev/null || true
+          cp test-output.log ci-reports/test-output.log 2>/dev/null || true
           python3 - <<'EOF'
           import glob, os, re
           summary = []
@@ -69,6 +71,8 @@ jobs:
               m = re.search(r'tests="(\d+)" skipped="(\d+)" failures="(\d+)" errors="(\d+)"', txt)
               if m:
                   summary.append(f"{os.path.basename(f)}: tests={m.group(1)} failures={m.group(3)} errors={m.group(4)}")
+          if not summary:
+              summary.append("no test result XMLs produced (compile/worker failure)")
           open("ci-reports/unit-test-summary.txt", "w").write("\n".join(summary))
           EOF
           cat ci-reports/unit-test-summary.txt
