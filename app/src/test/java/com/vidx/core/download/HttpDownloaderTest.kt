@@ -93,12 +93,10 @@ object HttpDownloaderTest {
 
         Tests.test("downloader", "timeout is retryable and keeps partial file") {
             val srv = MockServer().apply {
-                route("/slow") { ex ->
-                    ex.sendResponseHeaders(200, bytes.size.toLong())
-                    ex.responseBody.use {
-                        it.write(bytes.copyOfRange(0, 1000))
-                        it.flush() // deliver a chunk, then drop the connection
-                    }
+                routeRaw("/slow") { _, out ->
+                    out.write("HTTP/1.1 200 OK\r\nContent-Length: ${bytes.size}\r\n\r\n".toByteArray())
+                    out.write(bytes.copyOfRange(0, 1000))
+                    out.flush() // deliver a chunk, then drop the connection
                     throw RuntimeException("connection dropped")
                 }
                 start()
