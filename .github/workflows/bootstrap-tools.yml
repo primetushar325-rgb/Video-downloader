@@ -27,7 +27,8 @@ jobs:
         run: |
           set -euxo pipefail
           mkdir -p vendor/android
-          LATEST=$(curl -fsSL https://repo1.maven.org/maven2/com/android/tools/r8/maven-metadata.xml | grep -oP '(?<=<latest>)[^<]+')
+          LATEST=$(curl -fsSL https://repo1.maven.org/maven2/com/android/tools/r8/maven-metadata.xml \
+            | python3 -c "import sys,re; vs=re.findall(r'<version>([^<]+)</version>', sys.stdin.read()); print(sorted(vs, key=lambda v: [int(x) for x in v.split('.')])[-1])")
           echo "r8 latest: $LATEST"
           curl -fL -o vendor/android/r8.jar "https://repo1.maven.org/maven2/com/android/tools/r8/${LATEST}/r8-${LATEST}.jar"
           ls -la vendor/android/r8.jar
